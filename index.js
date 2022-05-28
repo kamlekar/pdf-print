@@ -1,6 +1,4 @@
-var doc = new jspdf.jsPDF({
-  compressPdf: false,
-});
+var doc = new jspdf.jsPDF("p", "pt", "a4");
 doc.html(document.querySelector(".pdf_print_container"), {
   callback: function (pdf) {
     // pdf.save("sample-file.pdf");
@@ -12,13 +10,19 @@ doc.html(document.querySelector(".pdf_print_container"), {
         right:0; 
         top:0; 
         bottom:0; 
-        height:100%; 
-        width:650px; 
+        size: A4;
+        width: 100%;
+        height: 100%;
         padding:20px;
         z-index: 2;
       `
     );
-    iframe.src = pdf.output("datauristring");
+    var blobPDF = new Blob([pdf.output("blob")], { type: "application/pdf" });
+    var blobUrl = URL.createObjectURL(blobPDF);
+    iframe.src = blobUrl;
     document.body.appendChild(iframe);
+  },
+  html2canvas: {
+    scale: 0.5,
   },
 });
