@@ -1,8 +1,23 @@
-function renderPrintPage(sourceElement, endCallback) {
-  function getConvertedPdfFromHtml(doc, callback) {
+function renderAndShowPDF(sourceElement, endCallback) {
+  var globalStyles = {
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    pageNumberFontSize: 8,
+    scale: 2,
+    dpi: 300,
+  };
+
+  function convertPdfFromHtml(doc, callback) {
     const opt = {
-      margin: [5, 0, 8, 0],
-      enableLinks: false,
+      margin: [
+        globalStyles.marginTop,
+        globalStyles.marginRight,
+        globalStyles.marginBottom,
+        globalStyles.marginLeft,
+      ],
+      enableLinks: true,
       pagebreak: {
         avoid: ["tr", ".submodule-block", ".preface-page", ".first-page"],
         mode: ["css", "legacy"],
@@ -10,10 +25,10 @@ function renderPrintPage(sourceElement, endCallback) {
       image: { type: "jpeg", quality: 1 },
       html2canvas: {
         allowTaint: true,
-        dpi: 300,
+        dpi: globalStyles.dpi,
         letterRendering: true,
         logging: false,
-        scale: 2,
+        scale: globalStyles.scale,
         scrollX: 0,
         scrollY: 0,
       },
@@ -30,11 +45,11 @@ function renderPrintPage(sourceElement, endCallback) {
 
         for (let i = 1; i < totalPages + 1; i++) {
           pdf.setPage(i);
-          pdf.setFontSize(8);
+          pdf.setFontSize(globalStyles.pageNumberFontSize);
           pdf.text(
             `Page ${i} of ${totalPages}`,
-            pdf.internal.pageSize.getWidth() - 10,
-            pdf.internal.pageSize.getHeight() - 5
+            globalStyles.marginLeft,
+            pdf.internal.pageSize.getHeight() - globalStyles.marginBottom / 2
           );
         }
 
@@ -44,6 +59,9 @@ function renderPrintPage(sourceElement, endCallback) {
 
   function addPdfToIframe(doc) {
     var iframe = document.createElement("iframe");
+    iframe.onload = function () {
+      endCallback(iframe);
+    };
     iframe.setAttribute(
       "style",
       `
@@ -58,25 +76,20 @@ function renderPrintPage(sourceElement, endCallback) {
       `
     );
 
-    console.log(doc);
     var blobPDF = new Blob([doc.output("blob")], { type: "application/pdf" });
     var blobUrl = URL.createObjectURL(blobPDF);
     iframe.src = blobUrl;
 
     document.body.appendChild(iframe);
-
-    iframe.onload = function () {
-      endCallback(iframe);
-    };
   }
 
   var doc = new jspdf.jsPDF("p", "pt", "a4");
 
-  getConvertedPdfFromHtml(doc, (pdf) => {
+  convertPdfFromHtml(doc, (pdf) => {
     addPdfToIframe(pdf);
   });
 }
 
-renderPrintPage(document.querySelector(".pdf_print_container"), () => {
+renderAndShowPDF(document.querySelector(".pdf_print_container"), () => {
   // stop loader here
 });
