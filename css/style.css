@@ -1,0 +1,229 @@
+#dpi {
+  width: 1mm;
+  height: 1mm;
+  position: absolute;
+  left: -100%;
+  top: -100%;
+  z-index: -1000;
+}
+
+.first-page {
+  display: flex;
+  height: 0;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 84%;
+  margin: 0 auto;
+}
+
+.preface-page {
+  display: none;
+  width: 84%;
+  margin: 0 auto;
+}
+
+.preface-page h1 {
+  padding: 1in 0 0.5in 0;
+}
+
+.preface-page-wrapper {
+  text-align: left;
+  width: 100%;
+}
+
+.preface-page table {
+  font-size: 18px !important;
+  width: 100%;
+  min-width: 100%;
+  table-layout: fixed;
+  border: none !important;
+  line-height: 1.5 !important;
+}
+
+.preface-page table,
+.preface-page tr,
+.preface-page td {
+  border: none !important;
+}
+
+.preface-page td:first-child {
+  text-align: left;
+}
+
+.preface-page td:first-child ~ td {
+  text-align: right;
+}
+
+.pdf_print_container {
+  position: relative;
+}
+
+.pdf-page-number {
+  color: transparent;
+}
+
+.data_dv--temporary {
+  position: relative;
+}
+
+.data_dv--temporary table > tbody > tr > td,
+.data_dv--temporary table > thead > tr > th {
+  line-height: 26px !important;
+  font-size: 14px !important;
+}
+
+.data_dv--temporary .preface-page {
+  height: auto;
+  overflow: auto;
+  display: block;
+}
+
+.data_dv--temporary.preface--not-required .first-page {
+  display: none;
+}
+
+.data_dv--temporary.preface--not-required .preface-page {
+  display: none;
+}
+
+.data_dv--temporary.preface--not-required .pdf-page-number {
+  display: none;
+}
+
+.data_dv--temporary .submaster-block table,
+.data_dv--temporary .submaster-block tr {
+  border: 1px dashed black;
+}
+
+.data_dv--temporary table {
+  margin-top: 0px !important;
+}
+
+@page {
+  size: A4 !important;
+  margin: 1cm !important;
+}
+
+#dpi {
+  width: 1mm;
+  height: 1mm;
+  position: absolute;
+  left: -100%;
+  top: -100%;
+  z-index: -1000;
+}
+
+.first-page {
+  display: flex;
+  height: 0;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 84%;
+  margin: 0 auto;
+}
+
+.preface-page {
+  display: none;
+  width: 84%;
+  margin: 0 auto;
+}
+
+.preface-page h1 {
+  padding: 1in 0 0.5in 0;
+}
+
+.preface-page-wrapper {
+  text-align: left;
+  width: 100%;
+}
+
+.preface-page table {
+  font-size: 18px !important;
+  width: 100%;
+  min-width: 100%;
+  table-layout: fixed;
+  border: none !important;
+  line-height: 1.5 !important;
+}
+.preface-page table,
+.preface-page tr,
+.preface-page td {
+  border: none !important;
+}
+
+.preface-page td:first-child {
+  text-align: left;
+}
+
+.preface-page td:first-child ~ td {
+  text-align: right;
+}
+
+.pdf_print_container {
+  position: relative;
+}
+
+.pdf-page-number {
+  color: transparent;
+}
+
+.data_dv--temporary {
+  position: relative;
+}
+
+.data_dv--temporary table > tbody > tr > td,
+.data_dv--temporary table > thead > tr > th {
+  line-height: 26px !important;
+  font-size: 14px !important;
+}
+
+.data_dv--temporary .preface-page {
+  height: auto;
+  overflow: auto;
+  display: block;
+}
+
+.data_dv--temporary.preface--not-required .first-page {
+  display: none;
+}
+
+.data_dv--temporary.preface--not-required .preface-page {
+  display: none;
+}
+
+.data_dv--temporary.preface--not-required .pdf-page-number {
+  display: none;
+}
+
+.data_dv--temporary .submaster-block table,
+.data_dv--temporary .submaster-block tr {
+  border: 1px dashed black;
+}
+
+.data_dv--temporary table {
+  margin-top: 0px !important;
+}
+
+@page {
+  size: A4 !important;
+  margin: 1cm !important;
+}
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+  overflow: hidden;
+}
+
+@media print {
+  .submaster-block {
+    print-break-before: always;
+    print-break-after: always;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+}
