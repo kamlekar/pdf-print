@@ -94,7 +94,7 @@
 
 .data_dv--temporary .submaster-block table,
 .data_dv--temporary .submaster-block tr {
-  border: 1px dashed black;
+  border: 1px dotted black;
 }
 
 .data_dv--temporary table {
@@ -201,7 +201,7 @@
 
 .data_dv--temporary .submaster-block table,
 .data_dv--temporary .submaster-block tr {
-  border: 1px dashed black;
+  border: 1px dotted black;
 }
 
 .data_dv--temporary table {
