@@ -1,66 +1,73 @@
-function renderAndShowPDF(sourceElement, endCallback) {
-  var globalStyles = {
-    marginLeft: 10,
-    marginRight: 10,
-    marginTop: 10,
-    marginBottom: 10,
-    pageNumberFontSize: 8,
-    scale: 2,
-    dpi: 300,
-  };
+const pdfDocumentObject = new jspdf.jsPDF("p", "pt", "a4");
 
-  function convertPdfFromHtml(doc, callback) {
-    const opt = {
-      margin: [
-        globalStyles.marginTop,
-        globalStyles.marginRight,
-        globalStyles.marginBottom,
-        globalStyles.marginLeft,
-      ],
-      enableLinks: true,
-      pagebreak: {
-        avoid: ["tr", ".submodule-block", ".preface-page", ".first-page"],
-        mode: ["css", "legacy"],
-      },
-      image: { type: "jpeg", quality: 1 },
-      html2canvas: {
-        allowTaint: true,
-        dpi: globalStyles.dpi,
-        letterRendering: true,
-        logging: false,
-        scale: globalStyles.scale,
-        scrollX: 0,
-        scrollY: 0,
-      },
-      jsPDF: { doc },
-    };
+const printStyleSettings = {
+  marginLeft: 10,
+  marginRight: 10,
+  marginTop: 10,
+  marginBottom: 10,
+  pageNumberFontSize: 8,
+  scale: 2,
+  dpi: 300,
+};
 
-    return html2pdf()
-      .from(sourceElement)
-      .set(opt)
-      .toPdf()
-      .get("pdf")
-      .then((pdf) => {
-        const totalPages = pdf.internal.getNumberOfPages();
+const printFormatOptions = {
+  margin: [
+    printStyleSettings.marginTop,
+    printStyleSettings.marginRight,
+    printStyleSettings.marginBottom,
+    printStyleSettings.marginLeft,
+  ],
+  enableLinks: true,
+  pagebreak: {
+    avoid: ["tr", ".submodule-block", ".preface-page", ".first-page"],
+    mode: ["css", "legacy"],
+  },
+  image: { type: "jpeg", quality: 1 },
+  html2canvas: {
+    allowTaint: true,
+    dpi: printStyleSettings.dpi,
+    letterRendering: true,
+    logging: false,
+    scale: printStyleSettings.scale,
+    scrollX: 0,
+    scrollY: 0,
+  },
+  jsPDF: { doc: pdfDocumentObject },
+};
 
-        for (let i = 1; i < totalPages + 1; i++) {
-          pdf.setPage(i);
-          pdf.setFontSize(globalStyles.pageNumberFontSize);
-          pdf.text(
-            `Page ${i} of ${totalPages}`,
-            globalStyles.marginLeft,
-            pdf.internal.pageSize.getHeight() - globalStyles.marginBottom / 2
-          );
-        }
+async function getPrintReadyDocumentObjectFromHtmlElement(htmlElement) {
+  return html2pdf()
+    .from(htmlElement)
+    .set(printFormatOptions)
+    .toPdf()
+    .get("pdf")
+    .catch((err) => {
+      console.error(err);
+    });
+}
 
-        callback(pdf);
-      });
+function addPageNumberToEachPage(printReadyDocumentObject) {
+  const totalPages = printReadyDocumentObject.internal.getNumberOfPages();
+  const pageHeight = printReadyDocumentObject.internal.pageSize.getHeight();
+  const pageNumberPlacementX = printStyleSettings.marginLeft;
+  const pageNumberPlacementY = pageHeight - printStyleSettings.marginBottom / 2;
+
+  for (let pageNumber = 1; pageNumber < totalPages + 1; pageNumber++) {
+    printReadyDocumentObject.setPage(pageNumber);
+    printReadyDocumentObject.setFontSize(printStyleSettings.pageNumberFontSize);
+    printReadyDocumentObject.text(
+      `Page ${pageNumber} of ${totalPages}`,
+      pageNumberPlacementX,
+      pageNumberPlacementY
+    );
   }
+}
 
-  function addPdfToIframe(doc) {
+async function showPrintReadyPageInIframe(printReadyDocumentObject) {
+  return new Promise((resolve) => {
     var iframe = document.createElement("iframe");
     iframe.onload = function () {
-      endCallback(iframe);
+      resolve(iframe);
     };
     iframe.setAttribute(
       "style",
@@ -76,20 +83,21 @@ function renderAndShowPDF(sourceElement, endCallback) {
       `
     );
 
-    var blobPDF = new Blob([doc.output("blob")], { type: "application/pdf" });
+    var blobPDF = new Blob([printReadyDocumentObject.output("blob")], {
+      type: "application/pdf",
+    });
     var blobUrl = URL.createObjectURL(blobPDF);
     iframe.src = blobUrl;
 
     document.body.appendChild(iframe);
-  }
-
-  var doc = new jspdf.jsPDF("p", "pt", "a4");
-
-  convertPdfFromHtml(doc, (pdf) => {
-    addPdfToIframe(pdf);
   });
 }
 
-renderAndShowPDF(document.querySelector(".pdf_print_container"), () => {
-  // stop loader here
-});
+(async () => {
+  const htmlContainer = document.querySelector(".pdf_print_container");
+  const printReadyDocumentObject =
+    await getPrintReadyDocumentObjectFromHtmlElement(htmlContainer);
+  addPageNumberToEachPage(printReadyDocumentObject);
+  await showPrintReadyPageInIframe(printReadyDocumentObject);
+  // hide loader and stuff
+})();
